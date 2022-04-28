@@ -5,4 +5,12 @@
  *      Author: HYJH
  */
 
+#include "hw.h"
+
+void hwInit()
+{
+  bspInit();
+  ledInit();
+  usbInit();
+}
 
