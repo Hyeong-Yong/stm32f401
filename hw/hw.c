@@ -12,5 +12,10 @@ void hwInit()
   bspInit();
   ledInit();
   usbInit();
+  cliInit();
+  buttonInit();
+  flashInit();
+  spiInit();
+  gpioInit();
 }
 

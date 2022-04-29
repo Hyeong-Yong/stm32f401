@@ -14,6 +14,11 @@
 #include "cdc.h"
 #include "cli.h"
 #include "usb.h"
+#include "button.h"
+#include "flash.h"
+#include "gpio.h"
+#include "spi.h"
+
 void hwInit(void);
 
 

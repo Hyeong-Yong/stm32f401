@@ -9,6 +9,8 @@
 #include "def.h"
 void apInit()
 {
+  cliOpen(_DEF_UART1, 57600);
+  spiBegin(_DEF_SPI1);
 
 }
 
@@ -20,9 +22,9 @@ void apMain()
     if (millis()-pre_time >= 2000)
     {
       pre_time = millis();
-      ledToggle(_DEF_LED1);
+      //ledToggle(_DEF_LED1);
     }
 
-
+    cliMain();
   }
 }

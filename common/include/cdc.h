@@ -5,10 +5,11 @@
  *      Author: HYJH
  */
 
-#include "hw_def.h"
 
 #ifndef SRC_COMMON_HW_INCLUDE_CDC_H_
 #define SRC_COMMON_HW_INCLUDE_CDC_H_
+
+#include "hw_def.h"
 
 #ifdef _USE_HW_CDC
 bool     cdcInit(void);

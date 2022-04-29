@@ -12,8 +12,12 @@
 
 #ifdef _USE_HW_UART
 
+#define _USE_UART1
+
+
 static bool is_open[UART_MAX_CH];
 
+#ifdef _USE_UART2
 static qbuffer_t qbuffer[UART_MAX_CH];
 static uint8_t rx_buf[256];
 static uint8_t rx_data[UART_MAX_CH];
@@ -21,7 +25,7 @@ static uint8_t rx_data[UART_MAX_CH];
 UART_HandleTypeDef huart1;
 HAL_StatusTypeDef status;
 DMA_HandleTypeDef hdma_usart1_rx;
-
+#endif
 
 bool uartInit(void)
 {
@@ -41,8 +45,9 @@ bool uartOpen(uint8_t ch, uint32_t baud)
     case _DEF_UART1: // USB는 가성 포트
     is_open[ch] = true;
     ret = true;
-
+    break;
     case _DEF_UART2: //USART2는 물리적인 설정이 필요
+#ifdef _USE_UART2
       huart1.Instance          = USART1;
       huart1.Init.BaudRate     = baud;
       huart1.Init.WordLength   = UART_WORDLENGTH_8B;
@@ -79,6 +84,7 @@ bool uartOpen(uint8_t ch, uint32_t baud)
           qbuffer[ch].head = qbuffer[ch].len - hdma_usart1_rx.Instance->CNDTR; //256-256= 0, 256-255= 1, ...
           qbuffer[ch].tail = qbuffer[ch].head; //Flash
         }
+#endif
     break;
   }
   return ret;
@@ -96,8 +102,10 @@ uint32_t uartAvailable(uint8_t ch)
       break;
 
     case _DEF_UART2:
+#ifdef _USE_UART2
       qbuffer[ch].head=qbuffer[ch].len - hdma_usart1_rx.Instance->CNDTR;
       ret = qbufferAvailable(&qbuffer[ch]);
+#endif
       break;
   }
   return ret;
@@ -113,7 +121,9 @@ uint8_t uartRead(uint8_t ch)
       break;
 
     case _DEF_UART2:
+#ifdef _USE_UART2
       qbufferRead(&qbuffer[ch], &ret ,1);
+#endif
       break;
 
   }
@@ -130,11 +140,13 @@ uint32_t uartWrite(uint8_t ch, uint8_t *p_data, uint32_t length)
       ret =cdcWrite(p_data, length);
       break;
     case _DEF_UART2:
+#ifdef _USE_UART2
       status = HAL_UART_Transmit(&huart1, p_data, length, 100);
       if (status==HAL_OK)
         {
           ret= length;
         }
+#endif
       break;
   }
   return ret;
@@ -166,7 +178,9 @@ uint32_t uartGetBaud(uint8_t ch)
   case _DEF_UART1:
   ret = cdcGetBaud();
   case _DEF_UART2:
+#ifdef _USE_UART2
     ret= huart1.Init.BaudRate;
+#endif
   break;
   }
   return ret;
@@ -194,6 +208,8 @@ bool uartClose(uint8_t ch)
   return true;
 }
 
+#ifdef _USE_UART2
+
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
   if (huart->Instance ==USART1)
@@ -203,7 +219,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-#if 1
+#if 0
   if (huart->Instance ==USART1) // 어떤 UART 인터럽트(예: UART2, UART3 등)가 걸리면 RxCpItCallback으로 들어오니까 USART1만 작동하도록
     {
       qbufferWrite(&qbuffer[_DEF_UART2], &rx_data[_DEF_UART2], 1);
@@ -299,5 +315,6 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE END USART1_MspDeInit 1 */
   }
 }
+#endif
 
 #endif

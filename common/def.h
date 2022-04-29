@@ -35,6 +35,11 @@
 #define _DEF_MOTOR1 0
 #define _DEF_MOTOR2 1
 
+#define _DEF_BUTTON1 0
+#define _DEF_BUTTON2 1
+#define _DEF_BUTTON3 2
+#define _DEF_BUTTON4 3
+
 #define _DEF_INPUT		0
 #define _DEF_INPUT_PULLUP	1
 #define _DEF_INPUT_PULLDOWN	2
@@ -43,7 +48,7 @@
 #define _DEF_OUTPUT_PULLDOWN	5
 
 #define _DEF_SPI1 		0  //DAC_MSP4822
-#define _DEF_SPI2 		1
+#define _DEF_SPI2 		1  //LCD_ST7735
 
 #define _DEF_DAC_CS		0  //GPIO DAC_CS
 #define _DEF_DAC_LDAC		1  //GPIO DAC_LDAC
